@@ -16,11 +16,13 @@ function DrawingArea(props) {
 
     const createElement = (x1,y1,x2,y2,ctx) => {
 
+      // creating line element
       if(currentTool === 'line'){
         const element = gen.line(x1,y1,x2,y2)
         return {x1,y1,x2,y2, element}
       }
 
+      // creating RECTANGLE element
       if(currentTool === 'rectangle'){
         const element = gen.rectangle(x1,y1,x2-x1,y2-y1)
         return {x1,y1,x2,y2, element}
@@ -42,13 +44,14 @@ function DrawingArea(props) {
         const x = e.clientX - canvas.offsetLeft
         const y = e.clientY - canvas.offsetTop
         
-        if(currentTool === 'pen'){            
-          setPrevPos({x,y})
-          ctx.beginPath()
-          ctx.moveTo(x,y)
+        // if(currentTool === 'pen'){            
+        //   setPrevPos({x,y})
+        //   ctx.beginPath()
+        //   ctx.moveTo(x,y)
           
-        }
+        // }
 
+        // creating initial element
         const element = createElement(x,y,x,y)
         setElements(prev => [...prev,element])
         
@@ -60,15 +63,17 @@ function DrawingArea(props) {
 
           if(!isDrawing)  return
 
-          if(currentTool === 'pen'){            
-            ctx.lineTo(x,y)
-            ctx.stroke()
-            setPrevPos({x,y})
-          }
+          // if(currentTool === 'pen'){            
+          //   ctx.lineTo(x,y)
+          //   ctx.stroke()
+          //   setPrevPos({x,y})
+          // }
           
+          //getting index of last element in array
           const index = elements.length -1
           const {x1,y1} = elements[index]
 
+          //updating element according to the movement of mouse
           const element = createElement(x1,y1,x,y)
 
           const temp = [...elements]

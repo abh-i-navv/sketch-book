@@ -16,6 +16,7 @@ function App() {
       <div>
       <div className='flex flex-row justify-center items-center'>
       
+      
       {/* <div className='border-black border-2 cursor-pointer m-2 p-2'>
         <FaPen onClick={()=>{setCurrentTool('pen')}} />
       </div> */}
