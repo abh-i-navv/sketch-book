@@ -3,9 +3,6 @@ import rough from 'roughjs';
 
 const gen = rough.generator()
 
-
-
-
 function DrawingArea(props) {
 
     const canvasRef = useRef(null)
