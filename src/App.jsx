@@ -8,7 +8,7 @@ import { IoRemoveOutline } from "react-icons/io5";
 
 function App() {
   
-  const [currentTool, setCurrentTool] = useState('line')
+  const [currentTool, setCurrentTool] = useState('pen')
   const canvasRef = useRef(null)
 
   return (
@@ -17,19 +17,19 @@ function App() {
       <div className='flex flex-row justify-center items-center'>
       
       
-      {/* <div className='border-black border-2 cursor-pointer m-2 p-2'>
-        <FaPen onClick={()=>{setCurrentTool('pen')}} />
-      </div> */}
-      <div className='border-black border-2 cursor-pointer m-2 p-2'>
-        <IoRemoveOutline onClick={()=>{setCurrentTool('line')}} />
+      <div className='border-black border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('pen')}} >
+        <FaPen  />
       </div>
-      <div className='border-black border-2 cursor-pointer m-2 p-2'>
-        <MdOutlineRectangle onClick={()=>{setCurrentTool('rectangle')}} />
+      <div className='border-black border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('line')}}>
+        <IoRemoveOutline  />
+      </div>
+      <div className='border-black border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('rectangle')}}>
+        <MdOutlineRectangle  />
       </div>
 
-      {/* <div className='border-black border-2 cursor-pointer m-2 p-2'>
-        <MdOutlineClear onClick={Clear(canvasRef)}/>
-      </div> */}
+      <div className='border-black border-2 cursor-pointer m-2 p-2' onClick={Clear}>
+        <MdOutlineClear />
+      </div>
 
       </div>
         <DrawingArea currentTool={currentTool}/>
