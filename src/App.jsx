@@ -3,9 +3,10 @@ import DrawingArea from './components/DrawingArea'
 import { FaPen } from "react-icons/fa";
 import { MdOutlineRectangle } from "react-icons/md";
 import { MdOutlineClear } from "react-icons/md";
-import { Clear } from './scripts/Clear';
 import { IoRemoveOutline } from "react-icons/io5";
 import { DrawProvider } from './context/useDraw';
+import { IoEllipseOutline } from "react-icons/io5";
+import { GoDiamond } from "react-icons/go";
 
 function App() {
   
@@ -28,6 +29,12 @@ function App() {
         </div>
         <div className='border-black border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('rectangle')}}>
           <MdOutlineRectangle  />
+        </div>
+        <div className='border-black border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('ellipse')}}>
+          <IoEllipseOutline  />
+        </div>
+        <div className='border-black border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('rhombus')}}>
+          <GoDiamond  />
         </div>
 
         <div className='border-black border-2 cursor-pointer m-2 p-2' onClick={() => {setElements([])}}>

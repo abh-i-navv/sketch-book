@@ -9,7 +9,7 @@ function DrawingArea(props) {
     const canvasRef = useRef(null)
     const {currentTool} = props
     const [isDrawing, setDrawing] = useState(false)
-    const [prevPos,setPrevPos] = useState({x:0,y:0})
+    // const [prevPos,setPrevPos] = useState({x:0,y:0})
     // const [elements, setElements] = useState([])
     const {elements, setElements} = useDraw()
     const [points,setPoints] = useState([])
@@ -28,11 +28,37 @@ function DrawingArea(props) {
         return {x1,y1,x2,y2, element}
       }
 
+      // creating ellipse element
+      if(currentTool === 'ellipse'){
+
+        // ellipse(centerX, centerY, width, height)
+        const element = gen.ellipse((x1+x2)/2,(y1+y2)/2,x2-x1,y2-y1)
+        return {x1,y1,x2,y2, element}
+
+      }
+
+      // creating rhombus element
+      if(currentTool === 'rhombus'){
+
+        // used some maths for calculating points of rhombus
+        // A-> top, B-> left, C-> bottom, D-> right
+        const A = [x1+Math.floor((x2-x1)/2) , y1] 
+        const B = [x1, Math.floor((y2-y1)/2)  + (y2+y1)/2]
+        const C = [x1+Math.floor((x2-x1)/2) , y2-y1+y2]
+        const D = [x2,Math.floor((y2-y1)/2)  + (y2+y1)/2]
+        const pts = [A,B,C,D]
+
+
+        const element = gen.polygon(pts)
+        return {x1,y1,x2,y2, element}
+      }
+
       //creating pen element
       if(currentTool === 'pen') {
         const element = gen.linearPath(pointsArr)
         return {x1,y1,x2,y2, element}
       }
+
     
     }
 
@@ -64,10 +90,10 @@ function DrawingArea(props) {
         const x = e.clientX - canvas.offsetLeft
         const y = e.clientY - canvas.offsetTop
         
-        setPoints([])
         if(currentTool === 'pen'){  
-
+          
           // clearing array of points
+          setPoints([])
 
           // setting first point on mouse down
           setPoints(pts=> [...pts,[x,y]])
@@ -90,15 +116,16 @@ function DrawingArea(props) {
           const y = e.clientY - canvas.offsetTop
 
           if(!isDrawing)  return
+          
+          // getting index of last element in array
+          const index = elements.length -1
+          const {x1,y1} = elements[index]
 
           if(currentTool === 'pen'){            
             
             // updating array of points on mouse movement
             setPoints(points=> [...points,[x,y]])
 
-            // getting index of last element in array
-            const index = elements.length -1
-            const {x1,y1} = elements[index]
 
             //updating element according to the movement of mouse
             const {element} = createElement(x1,y1,x,y,points)
@@ -109,9 +136,6 @@ function DrawingArea(props) {
           
           // for line and rectangle
           else{
-            // getting index of last element in array
-            const index = elements.length -1
-            const {x1,y1} = elements[index]
   
             //updating element according to the movement of mouse
             const element = createElement(x1,y1,x,y)
@@ -147,7 +171,7 @@ function DrawingArea(props) {
 
   return (
     <div className='flex justify-center'>
-    <canvas ref = {canvasRef} height={800} width={800} className='border-2 border-black' id='canvas'></canvas>
+    <canvas ref = {canvasRef} height={window.innerHeight} width={window.innerWidth} className='border-2 border-black' id='canvas'></canvas>
     </div>
   )
 }
