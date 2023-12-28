@@ -1,5 +1,6 @@
 import React, { useState,useRef, useEffect } from 'react'
 import rough from 'roughjs';
+import useDraw from '../context/useDraw';
 
 const gen = rough.generator()
 
@@ -9,7 +10,8 @@ function DrawingArea(props) {
     const {currentTool} = props
     const [isDrawing, setDrawing] = useState(false)
     const [prevPos,setPrevPos] = useState({x:0,y:0})
-    const [elements, setElements] = useState([])
+    // const [elements, setElements] = useState([])
+    const {elements, setElements} = useDraw()
     const [points,setPoints] = useState([])
 
     const createElement = (x1,y1,x2,y2,pointsArr) => {
@@ -62,10 +64,10 @@ function DrawingArea(props) {
         const x = e.clientX - canvas.offsetLeft
         const y = e.clientY - canvas.offsetTop
         
+        setPoints([])
         if(currentTool === 'pen'){  
 
           // clearing array of points
-          setPoints([])
 
           // setting first point on mouse down
           setPoints(pts=> [...pts,[x,y]])
@@ -124,6 +126,7 @@ function DrawingArea(props) {
       const onMouseUp = () => {
         
         setDrawing(false)
+        setPoints([])
         ctx.closePath()
         
       }
