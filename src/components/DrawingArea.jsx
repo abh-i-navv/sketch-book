@@ -53,6 +53,20 @@ function DrawingArea(props) {
         return {x1,y1,x2,y2, element}
       }
 
+      if(currentTool === 'triangle'){
+
+        // used some maths for calculating points of triangle
+        // A-> top, B-> left, C-> right
+        const A = [x1+Math.floor((x2-x1)/2) , y1] 
+        const B = [x1, y2]
+        const C = [x2, y2]
+        const pts = [A,B,C,A]
+
+
+        const element = gen.polygon(pts)
+        return {x1,y1,x2,y2, element}
+      }
+
       //creating pen element
       if(currentTool === 'pen') {
         const element = gen.linearPath(pointsArr)

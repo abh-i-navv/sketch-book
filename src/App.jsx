@@ -7,6 +7,7 @@ import { IoRemoveOutline } from "react-icons/io5";
 import { DrawProvider } from './context/useDraw';
 import { IoEllipseOutline } from "react-icons/io5";
 import { GoDiamond } from "react-icons/go";
+import { IoTriangleOutline } from "react-icons/io5";
 
 function App() {
   
@@ -35,6 +36,9 @@ function App() {
         </div>
         <div className='border-black border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('rhombus')}}>
           <GoDiamond  />
+        </div>
+        <div className='border-black border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('triangle')}}>
+          <IoTriangleOutline  />
         </div>
 
         <div className='border-black border-2 cursor-pointer m-2 p-2' onClick={() => {setElements([])}}>
