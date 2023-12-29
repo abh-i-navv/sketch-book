@@ -53,6 +53,7 @@ function DrawingArea(props) {
         return {x1,y1,x2,y2, element}
       }
 
+      // creating triangle element
       if(currentTool === 'triangle'){
 
         // used some maths for calculating points of triangle
@@ -73,6 +74,11 @@ function DrawingArea(props) {
         return {x1,y1,x2,y2, element}
       }
 
+      //creating eraser element
+      if(currentTool === 'eraser') {
+        const element = gen.linearPath(pointsArr,{stroke: "white",strokeWidth: 20})
+        return {x1,y1,x2,y2, element}
+      }
     
     }
 
@@ -104,7 +110,7 @@ function DrawingArea(props) {
         const x = e.clientX - canvas.offsetLeft
         const y = e.clientY - canvas.offsetTop
         
-        if(currentTool === 'pen'){  
+        if(currentTool === 'pen' || currentTool === 'eraser'){  
           
           // clearing array of points
           setPoints([])
@@ -135,7 +141,7 @@ function DrawingArea(props) {
           const index = elements.length -1
           const {x1,y1} = elements[index]
 
-          if(currentTool === 'pen'){            
+          if(currentTool === 'pen' || currentTool === 'eraser'){            
             
             // updating array of points on mouse movement
             setPoints(points=> [...points,[x,y]])
