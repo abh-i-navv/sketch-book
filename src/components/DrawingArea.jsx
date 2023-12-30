@@ -205,7 +205,7 @@ function DrawingArea() {
   return (
     <div className='flex justify-center '>
     <canvas ref = {canvasRef} height={window.innerHeight} width={window.innerWidth} 
-    className={` border-2 border-black m-0 ${currentTool === 'eraser' ? "cursor-cell" : "cursor-crosshair"}`} id='canvas'></canvas>
+    className={` border-2 border-[#F2F2F2] m-0 ${currentTool === 'eraser' ? "cursor-cell" : "cursor-crosshair"}`} id='canvas'></canvas>
     </div>
   )
 }

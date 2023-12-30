@@ -44,29 +44,10 @@ function ToolBar() {
 
   }
 
-  // const actionOnKeyPress=(e)=>{
-  //   console.log(e.key, e.ctrlKey)
-  //   if(e.key==='z'){
-  //     console.log("chalra kya?")
-  //     return Undo()
-      
-  //   }
-  //   if(e.ctrlKey && e.key==='y'){
-  //     return Redo()
-  //   }  
-  // }
-
-  // useEffect(()=> {
-  //   document.addEventListener('keydown', actionOnKeyPress)
-    
-  //   // return(
-  //   //   document.removeEventListener('keydown', actionOnKeyPress)
-  //   // )
-  // },[ ])
 
   return (
     <>
-    <div className='flex'>
+    <div className='flex absolute top-0 border-2 border-black z-10 bg-[#E6E5E5]'>
         <div className='border-black border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('pen')}} >
           <FaPen  />
         </div>
