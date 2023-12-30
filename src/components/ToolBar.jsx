@@ -87,7 +87,7 @@ function ToolBar() {
         </div>
     </div>
 
-    <div className='flex absolute top-14 right-10' >
+    <div className='flex absolute top-2 right-10' >
     <div className='m-2 border-2 cursor-pointer' onClick={() =>Undo()} >
       <LuUndo2 className='' size={30}/>
     </div>
