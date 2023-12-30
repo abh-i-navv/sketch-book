@@ -9,14 +9,15 @@ function App() {
   const [elements, setElements] = useState([])
   const canvasRef = useRef(null)
   const [strokeWidth, setStrokeWidth] = useState('5')
-  const [stroke, setStroke] = useState('black')
+  const [stroke, setStroke] = useState('#000000')
   const [roughness, setRoughness] = useState(0)
+  const [ elementHistory, setElementHistory] = useState([])
 
   return (
-    <DrawProvider value={{elements,setElements, currentTool, setCurrentTool, setStroke, stroke, setStrokeWidth, strokeWidth, roughness, setRoughness}}>
+    <DrawProvider value={{elements,setElements, currentTool, setCurrentTool, setStroke, stroke, setStrokeWidth, strokeWidth, roughness, setRoughness, elementHistory, setElementHistory}}>
       <>
-        <div>
-        <div className='flex flex-col justify-center items-center'>
+        <div className='overflow-auto no-scrollbar'>
+        <div className='flex flex-col justify-center items-center '>
     
         <ToolBar />
 

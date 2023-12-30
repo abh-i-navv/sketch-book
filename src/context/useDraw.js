@@ -9,8 +9,11 @@ export const DrawContext = createContext({
     setStrokeWidth: () => {},
     roughness: '0',
     setRoughness: () => {},
-    stroke: 'black',
-    setStroke: () => {}
+    stroke: '#000000',
+    setStroke: () => {},
+    elementHistory: [],
+    setElementHistory: () => {}
+
 })
 
 export const DrawProvider = DrawContext.Provider

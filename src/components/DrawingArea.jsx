@@ -4,14 +4,13 @@ import useDraw from '../context/useDraw';
 
 const gen = rough.generator()
 
-function DrawingArea(props) {
+function DrawingArea() {
 
     const canvasRef = useRef(null)
-    const {currentTool} = props
     const [isDrawing, setDrawing] = useState(false)
     // const [prevPos,setPrevPos] = useState({x:0,y:0})
     // const [elements, setElements] = useState([])
-    const {elements, setElements,strokeWidth,setStrokeWidth,stroke,setStroke, setRoughness,roughness} = useDraw()
+    const {elements, setElements,strokeWidth,setStrokeWidth,stroke,setStroke, setRoughness,roughness,currentTool,elemenHistory, setElementHistory} = useDraw()
     const [points,setPoints] = useState([])
     // const [strokeWidth, setStrokeWidth] = useState('5')
     // const [stroke, setStroke] = useState('black')
@@ -204,9 +203,9 @@ function DrawingArea(props) {
     },[elements,currentTool,isDrawing])
 
   return (
-    <div className='flex justify-center'>
+    <div className='flex justify-center '>
     <canvas ref = {canvasRef} height={window.innerHeight} width={window.innerWidth} 
-    className={`border-2 border-black m-0 ${currentTool === 'eraser' ? "cursor-cell" : "cursor-crosshair"}`} id='canvas'></canvas>
+    className={` border-2 border-black m-0 ${currentTool === 'eraser' ? "cursor-cell" : "cursor-crosshair"}`} id='canvas'></canvas>
     </div>
   )
 }
