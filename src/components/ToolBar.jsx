@@ -47,55 +47,55 @@ function ToolBar() {
 
   return (
     <>
-    <div className='flex absolute top-0 border-2 border-black z-10 bg-[#E6E5E5]'>
-        <div className='border-black border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('pen')}} >
+    <div className='flex absolute top-0 border-2 border-[#322560] z-10 bg-[#fafafa] rounded-xl'>
+        <div className='border-[#322560] border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('pen')}} >
           <FaPen  />
         </div>
-        <div className='border-black border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('line')}}>
+        <div className='border-[#322560] border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('line')}}>
           <IoRemoveOutline  />
         </div>
-        <div className='border-black border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('rectangle')}}>
+        <div className='border-[#322560] border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('rectangle')}}>
           <MdOutlineRectangle  />
         </div>
-        <div className='border-black border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('ellipse')}}>
+        <div className='border-[#322560] border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('ellipse')}}>
           <IoEllipseOutline  />
         </div>
-        <div className='border-black border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('rhombus')}}>
+        <div className='border-[#322560] border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('rhombus')}}>
           <GoDiamond  />
         </div>
-        <div className='border-black border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('triangle')}}>
+        <div className='border-[#322560] border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('triangle')}}>
           <IoTriangleOutline  />
         </div>
-        <div className='border-black border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('eraser')}}>
+        <div className='border-[#322560] border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('eraser')}}>
           <LuEraser  />
         </div>        
-        <div className='border-black border-2 cursor-pointer m-2 p-2' onClick={() => {setElements([])}}>
+        <div className='border-[#322560] border-2 cursor-pointer m-2 p-2' onClick={() => {setElements([])}}>
           <MdOutlineClear />
         </div>
 
         <div className='flex flex-col items-center m-2'>
-            <span className='justify-center'>width</span>
-            <input type='range' min={1} max={30} value={strokeWidth} onChange={(e) => {setStrokeWidth(e.target.value)}} ></input>
+            <span className='justify-center'>Width</span>
+            <input type='range' min={1} max={30} value={strokeWidth} className='w-20' onChange={(e) => {setStrokeWidth(e.target.value)}} ></input>
         </div>
         <div className='flex flex-col items-center m-2'>
-            <span>roughness</span>
-            <input type='range'min={0} max={3} value={roughness} step={0.5} onChange={(e) => {setRoughness(e.target.value)}}></input>
+            <span>Roughness</span>
+            <input type='range'min={0} max={3} value={roughness} step={0.5} className='w-20'  onChange={(e) => {setRoughness(e.target.value)}}></input>
         </div>
 
         <div className='flex justify-center items-center m-2'>
           <input type='color' value={stroke} onChange={(e) => {setStroke(e.target.value)}}></input>
         </div>
     </div>
-
-    <div className='flex absolute top-2 right-10' >
-    <div className='m-2 border-2 cursor-pointer' onClick={() =>Undo()} >
+    <div className='flex absolute top-0 right-0' >
+    <div className='m-2 border-[#322560] border-2 cursor-pointer rounded-lg' onClick={() =>Undo()} >
       <LuUndo2 className='' size={30}/>
     </div>
 
-    <div className='m-2 border-2 cursor-pointer' onClick={Redo}>
+    <div className='m-2 cursor-pointer border-[#322560] border-2 rounded-lg' onClick={Redo}>
       <LuRedo2 className='' size={30}/>
     </div>
     </div>
+
 
     </>
   )
