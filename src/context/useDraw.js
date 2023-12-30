@@ -2,7 +2,15 @@ import { createContext, useContext } from "react";
 
 export const DrawContext = createContext({
     elements: [],
-    setElements: () => {}
+    setElements: () => {},
+    currentTool: 'pen',
+    setCurrentTool: () => {},
+    strokeWidth: '5',
+    setStrokeWidth: () => {},
+    roughness: '0',
+    setRoughness: () => {},
+    stroke: 'black',
+    setStroke: () => {}
 })
 
 export const DrawProvider = DrawContext.Provider
