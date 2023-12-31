@@ -119,7 +119,7 @@ function DrawingArea() {
           setPoints([])
           let options = {stroke:stroke, strokeWidth:strokeWidth, roughness:roughness}
           if(currentTool === 'eraser'){
-            options = {stroke: "white",strokeWidth: 50, roughness: 0}
+            options = {stroke: "white",strokeWidth: strokeWidth, roughness: 0}
           }
 
           // setting first point on mouse down
@@ -156,7 +156,7 @@ function DrawingArea() {
 
             let options = {stroke:stroke, strokeWidth:strokeWidth, roughness:roughness}
             if(currentTool === 'eraser'){
-              options = {stroke: "white",strokeWidth: 50, roughness: 0}
+              options = {stroke: "white",strokeWidth: strokeWidth, roughness: 0}
             }
 
             //updating element according to the movement of mouse

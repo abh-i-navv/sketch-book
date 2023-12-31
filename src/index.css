@@ -24,8 +24,8 @@ input[type="color"] {
 
 input[type="color"]::-webkit-color-swatch-wrapper {
     padding: 0;
-    width: 25px;
-    height: 25px;
+    width: 30px;
+    height: 30px;
   }
 
   input[type="color"]::-webkit-color-swatch {

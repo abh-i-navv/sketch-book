@@ -10,6 +10,7 @@ import { LuEraser } from "react-icons/lu";
 import useDraw from '../context/useDraw';
 import { LuUndo2 } from "react-icons/lu";
 import { LuRedo2 } from "react-icons/lu";
+import { RiDragMove2Fill } from "react-icons/ri";
 
 
 
@@ -48,6 +49,10 @@ function ToolBar() {
   return (
     <>
     <div className='flex absolute top-0 border-2 border-[#322560] z-10 bg-[#fafafa] rounded-xl'>
+        <div className='border-[#322560] border-2 cursor-pointer m-2 p-2' onClick={() => {setElements([])}}>
+          <RiDragMove2Fill />
+        </div>
+
         <div className='border-[#322560] border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('pen')}} >
           <FaPen  />
         </div>
@@ -75,7 +80,7 @@ function ToolBar() {
 
         <div className='flex flex-col items-center m-2'>
             <span className='justify-center'>Width</span>
-            <input type='range' min={1} max={30} value={strokeWidth} className='w-20' onChange={(e) => {setStrokeWidth(e.target.value)}} ></input>
+            <input type='range' min={1} max={50} value={strokeWidth} className='w-20' onChange={(e) => {setStrokeWidth(e.target.value)}} ></input>
         </div>
         <div className='flex flex-col items-center m-2'>
             <span>Roughness</span>
