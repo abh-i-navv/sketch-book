@@ -12,9 +12,11 @@ function App() {
   const [stroke, setStroke] = useState('#000000')
   const [roughness, setRoughness] = useState(0)
   const [ elementHistory, setElementHistory] = useState([])
+  const [isMoving, setMoving] = useState([])
 
   return (
-    <DrawProvider value={{elements,setElements, currentTool, setCurrentTool, setStroke, stroke, setStrokeWidth, strokeWidth, roughness, setRoughness, elementHistory, setElementHistory}}>
+    <DrawProvider value={{elements,setElements, currentTool, setCurrentTool, setStroke, stroke,
+     setStrokeWidth, strokeWidth, roughness, setRoughness, elementHistory, setElementHistory, isMoving, setMoving}}>
       <>
         <div className='overflow-auto no-scrollbar'>
         <div className='flex flex-col justify-center items-center '>

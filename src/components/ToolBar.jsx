@@ -15,7 +15,8 @@ import { RiDragMove2Fill } from "react-icons/ri";
 
 
 function ToolBar() {
-  const {currentTool,setCurrentTool,strokeWidth,setStrokeWidth,stroke,setStroke, setRoughness,roughness,setElements,elements,elementHistory, setElementHistory} = useDraw()
+  const {currentTool,setCurrentTool,strokeWidth,setStrokeWidth,stroke,setStroke, setRoughness,
+    roughness,setElements,elements,elementHistory, setElementHistory} = useDraw()
 
   
   function Undo(){
@@ -49,7 +50,7 @@ function ToolBar() {
   return (
     <>
     <div className='flex absolute top-0 border-2 border-[#322560] z-10 bg-[#fafafa] rounded-xl'>
-        <div className='border-[#322560] border-2 cursor-pointer m-2 p-2' onClick={() => {setElements([])}}>
+        <div className='border-[#322560] border-2 cursor-pointer m-2 p-2' onClick={() => {setCurrentTool('moving')}}>
           <RiDragMove2Fill />
         </div>
 

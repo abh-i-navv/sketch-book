@@ -12,7 +12,9 @@ export const DrawContext = createContext({
     stroke: '#000000',
     setStroke: () => {},
     elementHistory: [],
-    setElementHistory: () => {}
+    setElementHistory: () => {},
+    isMoving: [],
+    setMoving: () => {}
 
 })
 

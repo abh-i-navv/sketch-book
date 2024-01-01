@@ -2,46 +2,53 @@ import React, { useState,useRef, useEffect } from 'react'
 import rough from 'roughjs';
 import useDraw from '../context/useDraw';
 
+function cartesianDistance(x1,y1, x2,y2){
+  return Math.round((Math.sqrt(Math.pow(y2-y1,2) + Math.pow(x2-x1,2))))
+}
+
+
+
+
 const gen = rough.generator()
 
 function DrawingArea() {
 
     const canvasRef = useRef(null)
-    const [isDrawing, setDrawing] = useState(false)
-    // const [prevPos,setPrevPos] = useState({x:0,y:0})
-    // const [elements, setElements] = useState([])
-    const {elements, setElements,strokeWidth,setStrokeWidth,stroke,setStroke, setRoughness,roughness,currentTool,elemenHistory, setElementHistory} = useDraw()
+    const [action, setAction] = useState('none')
+    const [movingElement, setMovingElement] = useState(null) // for keeping track of the selected element using selection tool
+    
+    const {elements, setElements,strokeWidth,setStrokeWidth,stroke,setStroke, setRoughness,
+      roughness, currentTool,setCurrentTool,elemenHistory, setElementHistory, isMoving, setMoving} = useDraw()
     const [points,setPoints] = useState([])
-    // const [strokeWidth, setStrokeWidth] = useState('5')
-    // const [stroke, setStroke] = useState('black')
-    // const [roughness, setRoughness] = useState(0)
 
 
-    const createElement = (x1,y1,x2,y2,options,pointsArr ) => {
+    const createElement = (id, type,x1,y1,x2,y2,options,pointsArr ) => {
 
       // creating line element
-      if(currentTool === 'line'){
+      if(currentTool === 'line' || type === 'line'){
         const element = gen.line(x1,y1,x2,y2, options)
-        return {x1,y1,x2,y2, element}
+        return {id, type,x1,y1,x2,y2, element, options}
       }
 
       // creating RECTANGLE element
-      if(currentTool === 'rectangle'){
+      if(currentTool === 'rectangle' || type === 'rectangle'){
+        
         const element = gen.rectangle(x1,y1,x2-x1,y2-y1,options)
-        return {x1,y1,x2,y2, element}
+        
+        return {id,type,x1,y1,x2,y2, element}
       }
 
       // creating ellipse element
-      if(currentTool === 'ellipse'){
+      if(currentTool === 'ellipse' || type === 'ellipse'){
 
         // ellipse(centerX, centerY, width, height)
         const element = gen.ellipse((x1+x2)/2,(y1+y2)/2,x2-x1,y2-y1, options)
-        return {x1,y1,x2,y2, element}
+        return {id,type,x1,y1,x2,y2, element}
 
       }
 
       // creating rhombus element
-      if(currentTool === 'rhombus'){
+      if(currentTool === 'rhombus' || type === 'rhombus'){
 
         // used some maths for calculating points of rhombus
         // A-> top, B-> left, C-> bottom, D-> right
@@ -53,11 +60,11 @@ function DrawingArea() {
 
 
         const element = gen.polygon(pts,options)
-        return {x1,y1,x2,y2, element}
+        return {id,type,x1,y1,x2,y2,pts, element}
       }
 
       // creating triangle element
-      if(currentTool === 'triangle'){
+      if(currentTool === 'triangle' || type === 'triangle'){
 
         // used some maths for calculating points of triangle
         // A-> top, B-> left, C-> right
@@ -68,22 +75,128 @@ function DrawingArea() {
 
 
         const element = gen.polygon(pts,options)
-        return {x1,y1,x2,y2, element}
+        return {id,type,x1,y1,x2,y2,pts, element}
       }
 
       //creating pen element
-      if(currentTool === 'pen') {
+      if(currentTool === 'pen' || type === 'pen') {
         const element = gen.curve(pointsArr,options)
-        return {x1,y1,x2,y2, element}
+        return {id,type,pointsArr, element}
       }
 
       //creating eraser element
       if(currentTool === 'eraser') {
         const element = gen.curve(pointsArr,options)
-        return {x1,y1,x2,y2, element}
+        return {id,type,x1,y1,x2,y2, element}
       }
     
     }
+
+    // for finding if a element exists on the given point
+    const elementFinder = (x,y,element) => {
+      const {x1,y1,x2,y2,type} = element
+
+      // Line -> AB, to check if a point P lies on line => dist(AB) = dist(AP) + dist(PB)
+      if(type === 'line'){
+        const lineDist = cartesianDistance(x1,y1,x2,y2)
+        const pointDist = cartesianDistance(x,y,x1,y1) + cartesianDistance(x,y,x2,y2)
+        if( lineDist === pointDist){
+          return element
+        }
+      }
+      
+      // checking for rectangle and ellipse
+      else if(type === 'rectangle' || type === 'ellipse'){
+        const maxX = Math.max(x1,x2)
+        const maxY = Math.max(y1,y2)
+        const minX = Math.min(x1,x2)
+        const minY = Math.min(y1,y2)
+    
+        if(x <= maxX && x >= minX && y<= maxY && y>=minY){
+          
+          return element
+        }
+      }
+
+      //if point P lies inside triangle => area(ABC) = area(PAB) + area(PAC) + area(PBC)
+      else if(type === 'triangle'){
+        const {pts} = element
+        const A = pts[0]
+        const B = pts[1]
+        const C = pts[2]
+        const P = [x,y]
+    
+        const area = (x1,y1,x2,y2,x3,y3) => {
+          // Area A = [ x1(y2 – y3) + x2(y3 – y1) + x3(y1-y2)]/2 
+          return Math.abs((x1*(y2-y3) + x2*(y3-y1)+ x3*(y1-y2))/2.0)
+        }
+        const originalArea = area(A[0],A[1],B[0],B[1],C[0],C[1])
+        const testArea = area(P[0],P[1],A[0],A[1],B[0],B[1]) + area(P[0],P[1],B[0],B[1],C[0],C[1]) + area(P[0],P[1],A[0],A[1],C[0],C[1])
+    
+        if(originalArea === testArea) return  element
+      }
+    
+      else if(type=== 'rhombus'){
+        const {pts} = element
+    
+        function inside(point, vs) {
+          // ray-casting algorithm based on
+          // https://wrf.ecse.rpi.edu/Research/Short_Notes/pnpoly.html
+          
+          var x = point[0], y = point[1];
+          
+          var inside = false;
+          for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+              var xi = vs[i][0], yi = vs[i][1];
+              var xj = vs[j][0], yj = vs[j][1];
+              
+              var intersect = ((yi > y) != (yj > y))
+                  && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+              if (intersect) inside = !inside;
+          }
+          
+          return inside;
+      }
+    
+        if(inside([ x, y ], pts)){
+          return element
+        }
+      }
+
+      else if(type === 'pen'){
+        // console.log(element)
+        // console.log(x,y)
+
+        const {pointsArr} = element
+
+        for(let i =0; i<pointsArr.length; i++){
+
+          const currX = pointsArr[i][0]
+          const currY = pointsArr[i][1]
+
+          if(Math.abs(currX-x) <=5 && Math.abs(currY-y) <= 5){
+            return element        
+          }
+        }
+
+      }
+      
+    }
+    
+    //looping through each element and checking if point P lies on the element
+    const findElement = (x,y,elements) => {
+      return (elements.find(element => elementFinder(x,y,element)))
+    }
+
+
+    // function updateElement(index,x1,y1,x,y,options,points){
+    //   const ele = createElement(index,currentTool, x1,y1,x,y,options,points)
+
+    //   const tempEle = [...elements]
+    //   tempEle[index] = ele
+    //   setElements(tempEle)
+
+    // }
 
     useEffect(()=>{
 
@@ -94,96 +207,151 @@ function DrawingArea() {
       
       const roughCanvas =  rough.canvas(canvas)
 
-      elements.forEach((obj) => {
-        
-        // this is for drawing line and rectangle elements
-        const {element} = obj
-        if(element){
-          roughCanvas.draw(element)
-        }
-
-        // this is for drawing elements of pen
-        else if(obj){
-          roughCanvas.draw(obj)
-        }
-      })
+      if(elements.length > 0){
+        elements.forEach((obj) => {
+          if(!obj)  return
+          // this is for drawing elements
+          if(obj.element){
+            roughCanvas.draw(obj.element)
+          }
+          else  return
+  
+        })
+      }
 
       const onMouseDown = (e) =>{
-        setDrawing(true)
+
+        // calculating the coordinates with reference to canvas
         const x = e.clientX - canvas.offsetLeft
         const y = e.clientY - canvas.offsetTop
-        
-        if(currentTool === 'pen' || currentTool === 'eraser'){  
-          
-          // clearing array of points
-          setPoints([])
-          let options = {stroke:stroke, strokeWidth:strokeWidth, roughness:roughness}
-          if(currentTool === 'eraser'){
-            options = {stroke: "white",strokeWidth: strokeWidth, roughness: 0}
+
+        // if selection tool is selected
+        if(currentTool === 'moving'){
+          setAction('moving')
+          if(elements){
+
+            //getting the element at the point x,y
+            const currElement = findElement(x,y, elements)
+            
+
+            if(currElement){
+              const offsetX = x-currElement.x1
+              const offsetY = y-currElement.y1
+              setMovingElement([currElement,offsetX,offsetY]) //Data of selected element at point x,y
+            }
           }
 
-          // setting first point on mouse down
-          setPoints(pts=> [...pts,[x,y]])
-          const {element} = createElement(x,y,x,y,options,points)
-
-          //initialising the linearShape element
-          setElements(prev => [...prev,element])
         }
-
-        // creating initial element for line and rectangle
         else{
-          const options = {stroke:stroke, strokeWidth, roughness:roughness}
-          const element = createElement(x,y,x,y,options)
-          setElements(prev => [...prev,element])
+          setAction('drawing')
+          const index = elements.length
+          if(currentTool === 'pen' || currentTool === 'eraser'){  
+            
+            // clearing array of points
+            setPoints([])
+            let options = {stroke:stroke, strokeWidth:strokeWidth, roughness:roughness}
+            if(currentTool === 'eraser'){
+              options = {stroke: "white",strokeWidth: strokeWidth, roughness: 0}
+              
+            }
+            
+              // setting first point on mouse down
+              setPoints(pts=> [...pts,[x,y]])
+              const element = createElement(index,currentTool,x,y,x,y,options,points)
+              
+              //initialising the linearShape element
+              setElements(prev => [...prev,element])
+            
+          }
+  
+          // creating initial element for line and rectangle
+          else{
+            const options = {stroke:stroke, strokeWidth, roughness:roughness}
+            const element = createElement(index,currentTool,x,y,x,y,options)
+            setElements(prev => [...prev,element])
+          }
+          
         }
+
         
       }
 
       const onMouseMove = (e) => {
           const x = e.clientX - canvas.offsetLeft
           const y = e.clientY - canvas.offsetTop
-
-          if(!isDrawing)  return
           
-          // getting index of last element in array
-          const index = elements.length -1
-          const {x1,y1} = elements[index]
-
-          if(currentTool === 'pen' || currentTool === 'eraser'){            
+          if(action === 'drawing') {
             
-            // updating array of points on mouse movement
-            setPoints(points=> [...points,[x,y]])
-
-            let options = {stroke:stroke, strokeWidth:strokeWidth, roughness:roughness}
-            if(currentTool === 'eraser'){
-              options = {stroke: "white",strokeWidth: strokeWidth, roughness: 0}
+            // getting index of last element in array
+            const index = elements.length -1
+            const {x1,y1} = elements[index]
+  
+            if(currentTool === 'pen' || currentTool === 'eraser'){            
+              
+              // updating array of points on mouse movement
+              setPoints(points=> [...points,[x,y]])
+  
+              let options = {stroke:stroke, strokeWidth:strokeWidth, roughness:roughness}
+              if(currentTool === 'eraser'){
+                options = {stroke: "white",strokeWidth: strokeWidth, roughness: 0}
+              }
+  
+              //updating element according to the movement of mouse
+              const element = createElement(index+1,currentTool, x1,y1,x,y,options,points)
+              const tempElements = [...elements]
+              tempElements[index] = element
+              setElements(tempElements)
+              
             }
+            
+            // for line and rectangle
+            else{
+    
+              //updating element according to the movement of mouse
+              const options = {stroke:stroke, strokeWidth, roughness:roughness}
+              const element = createElement(index+1,currentTool, x1,y1,x,y, options)
+    
+              const tempElements = [...elements]
+              tempElements[index] = element
+              setElements(tempElements)
+            }
+          }
 
-            //updating element according to the movement of mouse
-            const {element} = createElement(x1,y1,x,y,options,points)
-            const tempElements = [...elements]
-            tempElements[index] = element
-            setElements(tempElements)
+          else if(action === 'moving'){
+            
+            if(!movingElement)  return
+            const type = movingElement[0].type // geting shape type
+            const {options} = movingElement[0].element // getting options of the element
+            const newX = (x-movingElement[1])
+            const newY = (y-movingElement[2])
+
+            if(type && type != 'pen'){
+
+                const {id,type, x1,y1,x2,y2} = movingElement[0]
+                
+                //updating the element on mouse move
+                const updatedElement = createElement(id,type,newX,newY,newX+x2-x1, newY+y2-y1, options)
+                
+                const tempElements = [...elements]
+                tempElements[id-1] = updatedElement
+                setElements(tempElements)
+                
+              }
+
+          }
+
+          else{
+            return
           }
           
-          // for line and rectangle
-          else{
-  
-            //updating element according to the movement of mouse
-            const options = {stroke:stroke, strokeWidth, roughness:roughness}
-            const element = createElement(x1,y1,x,y, options)
-  
-            const tempElements = [...elements]
-            tempElements[index] = element
-            setElements(tempElements)
-          }
 
       }
 
       const onMouseUp = () => {
         
-        setDrawing(false)
-        setPoints([])
+        setAction('none')
+        // setPoints([])
+        setMovingElement(null)
         ctx.closePath()
         
       }
@@ -200,7 +368,7 @@ function DrawingArea() {
         document.removeEventListener('mouseup', onMouseUp)
       }
 
-    },[elements,currentTool,isDrawing])
+    },[elements,currentTool,action])
 
   return (
     <div className='flex justify-center '>
