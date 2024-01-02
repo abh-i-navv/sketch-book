@@ -80,6 +80,7 @@ function DrawingArea() {
 
       //creating pen element
       if(currentTool === 'pen' || type === 'pen') {
+
         const element = gen.curve(pointsArr,options)
         return {id,type,pointsArr, element}
       }
@@ -175,7 +176,9 @@ function DrawingArea() {
           const currY = pointsArr[i][1]
 
           if(Math.abs(currX-x) <=5 && Math.abs(currY-y) <= 5){
-            return element        
+            const obj = {element:element, X: currX, Y: currY}
+            // console.log(obj)
+            return obj        
           }
         }
 
@@ -229,15 +232,24 @@ function DrawingArea() {
         if(currentTool === 'moving'){
           setAction('moving')
           if(elements){
-
+    
             //getting the element at the point x,y
-            const currElement = findElement(x,y, elements)
-            
+            const currElement = findElement(x,y, elements)        
 
             if(currElement){
-              const offsetX = x-currElement.x1
-              const offsetY = y-currElement.y1
-              setMovingElement([currElement,offsetX,offsetY]) //Data of selected element at point x,y
+              if(currElement.type ==='pen'){
+                const {pointsArr} = currElement
+
+                const offsetX = x 
+                const offsetY = y
+                setMovingElement([currElement,offsetX,offsetY])
+              }
+              else{
+
+                const offsetX = x-currElement.x1
+                const offsetY = y-currElement.y1
+                setMovingElement([currElement,offsetX,offsetY]) //Data of selected element at point x,y
+              }
             }
           }
 
@@ -325,7 +337,23 @@ function DrawingArea() {
             const newX = (x-movingElement[1])
             const newY = (y-movingElement[2])
 
-            if(type && type != 'pen'){
+            if(type === 'pen'){
+              // console.log(newX,newY)
+              const element = movingElement[0]
+              let {pointsArr,id} = element
+              
+              for(let i =0; i<pointsArr.length; i++){
+                pointsArr[i][0] = pointsArr[i][0] + newX/200
+                pointsArr[i][1] = pointsArr[i][1] + newY/200
+              }
+              const updatedElement = createElement(id,type,newX,newY,newX, newY, options,pointsArr)
+                
+                const tempElements = [...elements]
+                tempElements[id-1] = updatedElement
+                setElements(tempElements)
+
+            }
+            else if(type && type != 'pen'){
 
                 const {id,type, x1,y1,x2,y2} = movingElement[0]
                 
@@ -350,7 +378,7 @@ function DrawingArea() {
       const onMouseUp = () => {
         
         setAction('none')
-        // setPoints([])
+        setPoints([])
         setMovingElement(null)
         ctx.closePath()
         
@@ -361,11 +389,20 @@ function DrawingArea() {
       document.addEventListener('mouseup', onMouseUp)
       canvas.addEventListener('mousedown', onMouseDown)
 
+      // canvas.addEventListener('touchmove', onMouseMove)
+      // document.addEventListener('touchend', onMouseUp)
+      // canvas.addEventListener('touchstart', onMouseDown)
+
       return() => {
         // clearing event listeners
         canvas.removeEventListener('mousedown', onMouseDown)
         canvas.removeEventListener('mousemove', onMouseMove)
         document.removeEventListener('mouseup', onMouseUp)
+
+        // canvas.removeEventListener('touchstart', onMouseDown)
+        // canvas.removeEventListener('touchmove', onMouseMove)
+        // document.removeEventListener('touchend', onMouseUp)
+        
       }
 
     },[elements,currentTool,action])
