@@ -177,7 +177,6 @@ function DrawingArea() {
 
           if(Math.abs(currX-x) <=5 && Math.abs(currY-y) <= 5){
             const obj = {element:element, X: currX, Y: currY}
-            // console.log(obj)
             return obj        
           }
         }
@@ -239,6 +238,7 @@ function DrawingArea() {
             if(currElement){
               if(currElement.type ==='pen'){
                 const {pointsArr} = currElement
+                setPoints(pointsArr)
 
                 const offsetX = x 
                 const offsetY = y
@@ -334,18 +334,31 @@ function DrawingArea() {
             if(!movingElement)  return
             const type = movingElement[0].type // geting shape type
             const {options} = movingElement[0].element // getting options of the element
-            const newX = (x-movingElement[1])
-            const newY = (y-movingElement[2])
-
+            
             if(type === 'pen'){
               // console.log(newX,newY)
+              let pointsArr = [...points]
+              
+              const newX = (x-pointsArr[0][0])
+              const newY = (y-pointsArr[0][1])
+              // const offsetAr = []
+
+              // for(let i =0; i <pointsArr.length; i++){
+              
+              // }
+
+
+              // console.log([x,y], [pointsArr[0][0], pointsArr[0][1]])
+
               const element = movingElement[0]
-              let {pointsArr,id} = element
+              
+              let {id} = element
               
               for(let i =0; i<pointsArr.length; i++){
-                pointsArr[i][0] = pointsArr[i][0] + newX/200
-                pointsArr[i][1] = pointsArr[i][1] + newY/200
+                pointsArr[i][0] = pointsArr[i][0] + newX
+                pointsArr[i][1] = pointsArr[i][1] + newY
               }
+              setPoints(pointsArr)
               const updatedElement = createElement(id,type,newX,newY,newX, newY, options,pointsArr)
                 
                 const tempElements = [...elements]
@@ -354,6 +367,8 @@ function DrawingArea() {
 
             }
             else if(type && type != 'pen'){
+              const newX = (x-movingElement[1])
+              const newY = (y-movingElement[2])
 
                 const {id,type, x1,y1,x2,y2} = movingElement[0]
                 

@@ -80,11 +80,11 @@ function ToolBar() {
         </div>
 
         <div className='flex flex-col items-center m-2'>
-            <span className='justify-center'>Width</span>
+            <span className='justify-center select-none'>Width</span>
             <input type='range' min={1} max={50} value={strokeWidth} className='w-20' onChange={(e) => {setStrokeWidth(e.target.value)}} ></input>
         </div>
         <div className='flex flex-col items-center m-2'>
-            <span>Roughness</span>
+            <span className='select-none'>Roughness</span>
             <input type='range'min={0} max={3} value={roughness} step={0.5} className='w-20'  onChange={(e) => {setRoughness(e.target.value)}}></input>
         </div>
 
