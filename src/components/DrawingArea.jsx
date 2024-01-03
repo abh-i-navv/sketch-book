@@ -344,14 +344,21 @@ function DrawingArea() {
               const newY = (y-pointsArr[0][1])
               let offsetX = (x-pointsArr[0][0])
               let offsetY = (y-pointsArr[0][1])
+              let currDist = cartesianDistance(x,y, pointsArr[0][0], pointsArr[0][1])
 
               for(let i =0; i<pointsArr.length; i++){
                   
                 const currX = pointsArr[i][0]
                 const currY = pointsArr[i][1]
+      
+                const tempDist = cartesianDistance(x,y,currX,currY)
                 
-                  offsetX = Math.min(offsetX,Math.abs((x-currX)))
-                  offsetY = Math.min(offsetY,Math.abs(y-currY))
+                if(tempDist < currDist){
+                  currDist = tempDist
+                  offsetX = x-currX
+                  offsetY = y-currY
+
+                }
               }
 
               console.log(offsetX,offsetY)
