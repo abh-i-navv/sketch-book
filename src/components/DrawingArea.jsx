@@ -258,22 +258,24 @@ function DrawingArea() {
         else{
           setAction('drawing')
           const index = elements.length
-          if(currentTool === 'pen' || currentTool === 'eraser'){  
+          if(currentTool === 'pen' ){  
             
             // clearing array of points
             setPoints([])
             let options = {stroke:stroke, strokeWidth:strokeWidth, roughness:roughness}
-            if(currentTool === 'eraser'){
-              options = {stroke: "white",strokeWidth: strokeWidth, roughness: 0}
-              
-            }
-            
+                        
               // setting first point on mouse down
               setPoints(pts=> [...pts,[x,y]])
               const element = createElement(index,currentTool,x,y,x,y,options,points)
               
               //initialising the linearShape element
               setElements(prev => [...prev,element])
+            
+          }
+
+          else if(currentTool === 'eraser'){
+            setAction('erasing')
+            if(!elements) return
             
           }
   
@@ -298,17 +300,16 @@ function DrawingArea() {
             // getting index of last element in array
             const index = elements.length -1
             const {x1,y1} = elements[index]
-  
-            if(currentTool === 'pen' || currentTool === 'eraser'){            
+            
+            if(currentTool === 'eraser')  return
+
+            if(currentTool === 'pen' ){            
               
               // updating array of points on mouse movement
               setPoints(points=> [...points,[x,y]])
   
               let options = {stroke:stroke, strokeWidth:strokeWidth, roughness:roughness}
-              if(currentTool === 'eraser'){
-                options = {stroke: "white",strokeWidth: strokeWidth, roughness: 0}
-              }
-  
+               
               //updating element according to the movement of mouse
               const element = createElement(index+1,currentTool, x1,y1,x,y,options,points)
               const tempElements = [...elements]
@@ -403,6 +404,14 @@ function DrawingArea() {
                 
               }
 
+          }
+          else if(action === 'erasing'){
+            const tempElement = findElement(x,y,elements)
+            if(tempElement){
+              const updatedElements = [...elements]
+              updatedElements[tempElement.id-1] = []
+              setElements(updatedElements) 
+            }
           }
 
           else{
