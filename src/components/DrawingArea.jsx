@@ -239,9 +239,10 @@ function DrawingArea() {
               if(currElement.type ==='pen'){
                 const {pointsArr} = currElement
                 setPoints(pointsArr)
-
-                const offsetX = x 
-                const offsetY = y
+                
+                let offsetX = x 
+                let offsetY = y  
+            
                 setMovingElement([currElement,offsetX,offsetY])
               }
               else{
@@ -341,6 +342,20 @@ function DrawingArea() {
               
               const newX = (x-pointsArr[0][0])
               const newY = (y-pointsArr[0][1])
+              let offsetX = (x-pointsArr[0][0])
+              let offsetY = (y-pointsArr[0][1])
+
+              for(let i =0; i<pointsArr.length; i++){
+                  
+                const currX = pointsArr[i][0]
+                const currY = pointsArr[i][1]
+                
+                  offsetX = Math.min(offsetX,Math.abs((x-currX)))
+                  offsetY = Math.min(offsetY,Math.abs(y-currY))
+              }
+
+              console.log(offsetX,offsetY)
+              // console.log(movingElement[1],movingElement[2])
               // const offsetAr = []
 
               // for(let i =0; i <pointsArr.length; i++){
@@ -355,11 +370,11 @@ function DrawingArea() {
               let {id} = element
               
               for(let i =0; i<pointsArr.length; i++){
-                pointsArr[i][0] = pointsArr[i][0] + newX
-                pointsArr[i][1] = pointsArr[i][1] + newY
+                pointsArr[i][0] = pointsArr[i][0] + offsetX
+                pointsArr[i][1] = pointsArr[i][1] + offsetY
               }
-              setPoints(pointsArr)
-              const updatedElement = createElement(id,type,newX,newY,newX, newY, options,pointsArr)
+              // setPoints(pointsArr)
+              const updatedElement = createElement(id,type,pointsArr[0][0],pointsArr[0][1],pointsArr[1][0], pointsArr[1][1], options,pointsArr)
                 
                 const tempElements = [...elements]
                 tempElements[id-1] = updatedElement
