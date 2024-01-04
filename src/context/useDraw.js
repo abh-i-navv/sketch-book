@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useState } from "react";
 
 export const DrawContext = createContext({
     elements: [],
@@ -14,7 +14,9 @@ export const DrawContext = createContext({
     elementHistory: [],
     setElementHistory: () => {},
     isMoving: [],
-    setMoving: () => {}
+    setMoving: () => {},
+    scale: 1,
+    setScale: () => {}
 
 })
 

@@ -15,10 +15,11 @@ function DrawingArea() {
     const [movingElement, setMovingElement] = useState(null) // for keeping track of the selected element using selection tool
     const [panOffset, setPanOffset] = useState({x:0, y:0})
     const [initialPoints, setInitialPoints] = useState({x:0, y:0})
+    const [scaleOffset,setScaleOffset] = useState({x:0, y:0})
+    const [points,setPoints] = useState([])
 
     const {elements, setElements,strokeWidth,setStrokeWidth,stroke,setStroke, setRoughness,
-      roughness, currentTool,setCurrentTool,elemenHistory, setElementHistory, isMoving, setMoving} = useDraw()
-    const [points,setPoints] = useState([])
+      roughness, currentTool,setCurrentTool,elemenHistory, setElementHistory, isMoving, setMoving,scale, setScale} = useDraw()
 
 
     const createElement = (id, type,x1,y1,x2,y2,options,pointsArr ) => {
@@ -80,7 +81,7 @@ function DrawingArea() {
       //creating pen element
       if(currentTool === 'pen' || type === 'pen') {
 
-        const element = gen.linearPath(pointsArr,options)
+        const element = gen.curve(pointsArr,options)
         return {id,type,pointsArr, element}
       }
 
@@ -130,10 +131,21 @@ function DrawingArea() {
         const maxY = Math.max(y1,y2)
         const minX = Math.min(x1,x2)
         const minY = Math.min(y1,y2)
-    
-        if(x <= maxX && x >= minX && y<= maxY && y>=minY){
+        
+        if(action === 'erasing'){
+          if((x <= maxX+10 && x >= minX-10 && y<= maxY+10 && y>=minY-10) &&
+            ((Math.abs(x-minX) < 10 && y<=maxY && y>=minY) || (Math.abs(x-maxX) < 10 && y<=maxY && y>=minY) || 
+            (Math.abs(y-minY) < 10 && x<=maxX && x>=minX) || (Math.abs(y-maxY) < 10 && x<=maxX && x>=minX))){
+            console.log(element)
+            return element
+          }
+        }
+        else{          
+          if(x <= maxX && x >= minX && y<= maxY && y>=minY){
+            
+            return element
+          }
           
-          return element
         }
       }
 
@@ -191,7 +203,7 @@ function DrawingArea() {
           const currX = pointsArr[i][0]
           const currY = pointsArr[i][1]
 
-          if(Math.abs(currX-x) <=50 && Math.abs(currY-y) <= 50){
+          if(Math.abs(currX-x) <=10 && Math.abs(currY-y) <= 10){
             const obj = {element:element, X: currX, Y: currY}
             return obj        
           }
@@ -211,13 +223,21 @@ function DrawingArea() {
       
       const canvas = canvasRef.current
       const ctx = canvas.getContext('2d')
-            
-      ctx.clearRect(0,0,canvas.width,canvas.height)    
-      
-      ctx.save()
-      ctx.translate(panOffset.x, panOffset.y)
-      
       const roughCanvas =  rough.canvas(canvas)
+      ctx.clearRect(0,0,canvas.width,canvas.height)    
+            
+      const scaleWidth = canvas.width * scale
+      const scaleHeight = canvas.height * scale
+      const scaleOffsetX = (scaleWidth - canvas.width)/2
+      const scaleOffsetY = (scaleHeight - canvas.height)/2
+      setScaleOffset({x:scaleOffsetX, y:scaleOffsetY})
+
+      console.log(scale)
+
+      ctx.save()
+      ctx.translate(panOffset.x*scale - scaleOffsetX, panOffset.y*scale -scaleOffsetY)
+      
+      ctx.scale(scale,scale)
 
       if(elements.length > 0){
         elements.forEach((obj) => {
@@ -235,8 +255,8 @@ function DrawingArea() {
       const onMouseDown = (e) =>{
 
         // calculating the coordinates with reference to canvas
-        const x = e.clientX - panOffset.x
-        const y = e.clientY - panOffset.y
+        const x = (e.clientX - panOffset.x*scale + scaleOffsetX)/scale
+        const y = (e.clientY - panOffset.y*scale + scaleOffsetY)/scale
 
         // if selection tool is selected
         if(currentTool === 'moving'){
@@ -297,16 +317,15 @@ function DrawingArea() {
             const options = {stroke:stroke, strokeWidth, roughness:roughness}
             const element = createElement(index,currentTool,x,y,x,y,options)
             setElements(prev => [...prev,element])
-          }
-          
+          }          
         }
 
         
       }
 
       const onMouseMove = (e) => {
-          const x = e.clientX - panOffset.x
-          const y = e.clientY - panOffset.y
+        const x = (e.clientX - panOffset.x*scale + scaleOffsetX)/scale
+        const y = (e.clientY - panOffset.y*scale + scaleOffsetY)/scale
           
           if(currentTool === 'pan' && action === 'panning'){
             setPanOffset(prev => ({x:prev.x+(x-initialPoints.x), y:prev.y + (y-initialPoints.y)}))
@@ -396,8 +415,7 @@ function DrawingArea() {
 
       const onWheelEvent = (e) => {
         const {deltaX, deltaY} = e
-        
-        setPanOffset(prev => ({x:prev.x + deltaX, y:prev.y + deltaY}))
+        setPanOffset(prev => ({x:prev.x - deltaX, y:prev.y - deltaY}))
 
       }
 
@@ -425,7 +443,7 @@ function DrawingArea() {
         
       }
 
-    },[panOffset,elements,currentTool,action])
+    },[panOffset,elements,currentTool,action,scale])
 
   return (
     <div className='flex justify-center '>

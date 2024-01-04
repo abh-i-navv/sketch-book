@@ -12,12 +12,14 @@ import { LuUndo2 } from "react-icons/lu";
 import { LuRedo2 } from "react-icons/lu";
 import { RiDragMove2Fill } from "react-icons/ri";
 import { MdPanTool } from "react-icons/md";
+import { FaPlus } from "react-icons/fa6";
+import { FaMinus } from "react-icons/fa6";
 
 
 
 function ToolBar() {
   const {currentTool,setCurrentTool,strokeWidth,setStrokeWidth,stroke,setStroke, setRoughness,
-    roughness,setElements,elements,elementHistory, setElementHistory} = useDraw()
+    roughness,setElements,elements,elementHistory, setElementHistory,scale, setScale} = useDraw()
 
   
   function Undo(){
@@ -97,12 +99,22 @@ function ToolBar() {
         </div>
     </div>
     <div className='flex absolute top-0 right-0' >
-    <div className='m-2 border-[#322560] border-2 cursor-pointer rounded-lg' onClick={() =>Undo()} >
+    <div className='m-2 border-[#322560] border-2 cursor-pointer rounded-lg' onClick={Undo} >
       <LuUndo2 className='' size={30}/>
     </div>
 
     <div className='m-2 cursor-pointer border-[#322560] border-2 rounded-lg' onClick={Redo}>
       <LuRedo2 className='' size={30}/>
+    </div>
+    </div>
+
+    <div className='flex absolute bottom-5 right-5' >
+    <div className='m-2 border-[#322560] border-2 cursor-pointer rounded-lg' onClick={() => setScale(prev => Math.max((prev-0.1),0.2))} >
+      <FaMinus className='' size={20}/>
+    </div>
+
+    <div className='m-2 cursor-pointer border-[#322560] border-2 rounded-lg' onClick={() => setScale(prev => Math.min((prev+0.1),2.5))}>
+      <FaPlus className='' size={20}/>
     </div>
     </div>
 
