@@ -6,9 +6,6 @@ function cartesianDistance(x1,y1, x2,y2){
   return Math.round((Math.sqrt(Math.pow(y2-y1,2) + Math.pow(x2-x1,2))))
 }
 
-
-
-
 const gen = rough.generator()
 
 function DrawingArea() {
@@ -16,7 +13,9 @@ function DrawingArea() {
     const canvasRef = useRef(null)
     const [action, setAction] = useState('none')
     const [movingElement, setMovingElement] = useState(null) // for keeping track of the selected element using selection tool
-    
+    const [panOffset, setPanOffset] = useState({x:0, y:0})
+    const [initialPoints, setInitialPoints] = useState({x:0, y:0})
+
     const {elements, setElements,strokeWidth,setStrokeWidth,stroke,setStroke, setRoughness,
       roughness, currentTool,setCurrentTool,elemenHistory, setElementHistory, isMoving, setMoving} = useDraw()
     const [points,setPoints] = useState([])
@@ -165,8 +164,6 @@ function DrawingArea() {
       }
 
       else if(type === 'pen'){
-        // console.log(element)
-        // console.log(x,y)
 
         const {pointsArr} = element
 
@@ -204,8 +201,11 @@ function DrawingArea() {
 
       const canvas = canvasRef.current
       const ctx = canvas.getContext('2d')
-
-      ctx.clearRect(0,0,canvas.width,canvas.height)      
+            
+      ctx.clearRect(0,0,canvas.width,canvas.height)    
+      
+      ctx.save()
+      ctx.translate(panOffset.x, panOffset.y)
       
       const roughCanvas =  rough.canvas(canvas)
 
@@ -220,12 +220,12 @@ function DrawingArea() {
   
         })
       }
-
+      ctx.restore()
       const onMouseDown = (e) =>{
 
         // calculating the coordinates with reference to canvas
-        const x = e.clientX - canvas.offsetLeft
-        const y = e.clientY - canvas.offsetTop
+        const x = e.clientX - panOffset.x
+        const y = e.clientY - panOffset.y
 
         // if selection tool is selected
         if(currentTool === 'moving'){
@@ -255,27 +255,29 @@ function DrawingArea() {
           }
 
         }
+        else if(currentTool === 'pan'){
+          setAction('panning')
+          setInitialPoints({x:x, y:y})
+        }
         else{
           setAction('drawing')
           const index = elements.length
-          if(currentTool === 'pen' ){  
+          if(currentTool === 'pen' || currentTool === 'eraser'){  
             
             // clearing array of points
             setPoints([])
             let options = {stroke:stroke, strokeWidth:strokeWidth, roughness:roughness}
-                        
+            if(currentTool === 'eraser'){
+              options = {stroke: "white",strokeWidth: strokeWidth, roughness: 0}
+              
+            }
+            
               // setting first point on mouse down
               setPoints(pts=> [...pts,[x,y]])
               const element = createElement(index,currentTool,x,y,x,y,options,points)
               
               //initialising the linearShape element
               setElements(prev => [...prev,element])
-            
-          }
-
-          else if(currentTool === 'eraser'){
-            setAction('erasing')
-            if(!elements) return
             
           }
   
@@ -292,24 +294,29 @@ function DrawingArea() {
       }
 
       const onMouseMove = (e) => {
-          const x = e.clientX - canvas.offsetLeft
-          const y = e.clientY - canvas.offsetTop
+          const x = e.clientX - panOffset.x
+          const y = e.clientY - panOffset.y
           
-          if(action === 'drawing') {
+          if(currentTool === 'pan' && action === 'panning'){
+            setPanOffset(prev => ({x:prev.x+(x-initialPoints.x), y:prev.y + (y-initialPoints.y)}))
+          }
+
+          if(action === 'drawing' && currentTool !== 'pan') {
             
             // getting index of last element in array
             const index = elements.length -1
             const {x1,y1} = elements[index]
-            
-            if(currentTool === 'eraser')  return
-
-            if(currentTool === 'pen' ){            
+  
+            if(currentTool === 'pen' || currentTool === 'eraser'){            
               
               // updating array of points on mouse movement
               setPoints(points=> [...points,[x,y]])
   
               let options = {stroke:stroke, strokeWidth:strokeWidth, roughness:roughness}
-               
+              if(currentTool === 'eraser'){
+                options = {stroke: "white",strokeWidth: strokeWidth, roughness: 0}
+              }
+  
               //updating element according to the movement of mouse
               const element = createElement(index+1,currentTool, x1,y1,x,y,options,points)
               const tempElements = [...elements]
@@ -338,7 +345,7 @@ function DrawingArea() {
             const {options} = movingElement[0].element // getting options of the element
             
             if(type === 'pen'){
-              // console.log(newX,newY)
+              
               let pointsArr = [...points]
               
               const newX = (x-pointsArr[0][0])
@@ -362,7 +369,6 @@ function DrawingArea() {
                 }
               }
 
-              console.log(offsetX,offsetY)
               // console.log(movingElement[1],movingElement[2])
               // const offsetAr = []
 
@@ -405,14 +411,6 @@ function DrawingArea() {
               }
 
           }
-          else if(action === 'erasing'){
-            const tempElement = findElement(x,y,elements)
-            if(tempElement){
-              const updatedElements = [...elements]
-              updatedElements[tempElement.id-1] = []
-              setElements(updatedElements) 
-            }
-          }
 
           else{
             return
@@ -430,10 +428,19 @@ function DrawingArea() {
         
       }
 
+      const onWheelEvent = (e) => {
+        const {deltaX, deltaY} = e
+        
+        setPanOffset(prev => ({x:prev.x + deltaX, y:prev.y + deltaY}))
+
+      }
+
       //adding event listeners for mouse actions
       canvas.addEventListener('mousemove', onMouseMove)
       document.addEventListener('mouseup', onMouseUp)
       canvas.addEventListener('mousedown', onMouseDown)
+      document.addEventListener("wheel", onWheelEvent);
+
 
       // canvas.addEventListener('touchmove', onMouseMove)
       // document.addEventListener('touchend', onMouseUp)
@@ -444,6 +451,7 @@ function DrawingArea() {
         canvas.removeEventListener('mousedown', onMouseDown)
         canvas.removeEventListener('mousemove', onMouseMove)
         document.removeEventListener('mouseup', onMouseUp)
+        document.removeEventListener("wheel", onWheelEvent);
 
         // canvas.removeEventListener('touchstart', onMouseDown)
         // canvas.removeEventListener('touchmove', onMouseMove)
@@ -451,7 +459,7 @@ function DrawingArea() {
         
       }
 
-    },[elements,currentTool,action])
+    },[panOffset,elements,currentTool,action])
 
   return (
     <div className='flex justify-center '>

@@ -11,6 +11,7 @@ import useDraw from '../context/useDraw';
 import { LuUndo2 } from "react-icons/lu";
 import { LuRedo2 } from "react-icons/lu";
 import { RiDragMove2Fill } from "react-icons/ri";
+import { MdPanTool } from "react-icons/md";
 
 
 
@@ -52,6 +53,9 @@ function ToolBar() {
     <div className='flex absolute top-0 border-2 border-[#322560] z-10 bg-[#fafafa] rounded-xl'>
         <div className='border-[#322560] border-2 cursor-pointer m-2 p-2' onClick={() => {setCurrentTool('moving')}}>
           <RiDragMove2Fill />
+        </div>
+        <div className='border-[#322560] border-2 cursor-pointer m-2 p-2' onClick={() => {setCurrentTool('pan')}}>
+          <MdPanTool />
         </div>
 
         <div className='border-[#322560] border-2 cursor-pointer m-2 p-2' onClick={()=>{setCurrentTool('pen')}} >
