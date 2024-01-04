@@ -80,7 +80,7 @@ function DrawingArea() {
       //creating pen element
       if(currentTool === 'pen' || type === 'pen') {
 
-        const element = gen.curve(pointsArr,options)
+        const element = gen.linearPath(pointsArr,options)
         return {id,type,pointsArr, element}
       }
 
@@ -90,6 +90,25 @@ function DrawingArea() {
         return {id,type,x1,y1,x2,y2, element}
       }
     
+    }
+
+    const updateElement = (index,currentTool, x1,y1,x,y,options,points) => {
+
+      if(currentTool === 'pen' || currentTool === 'eraser'){
+        const element = createElement(index+1,currentTool, x1,y1,x,y,options,points)
+        const tempElements = [...elements]
+        tempElements[index] = element
+        setElements(tempElements)
+      }
+      else{
+        const options = {stroke:stroke, strokeWidth, roughness:roughness}
+        const element = createElement(index+1,currentTool, x1,y1,x,y, options)
+        
+        const tempElements = [...elements]
+        tempElements[index] = element
+        setElements(tempElements)
+      }
+
     }
 
     // for finding if a element exists on the given point
@@ -172,7 +191,7 @@ function DrawingArea() {
           const currX = pointsArr[i][0]
           const currY = pointsArr[i][1]
 
-          if(Math.abs(currX-x) <=5 && Math.abs(currY-y) <= 5){
+          if(Math.abs(currX-x) <=50 && Math.abs(currY-y) <= 50){
             const obj = {element:element, X: currX, Y: currY}
             return obj        
           }
@@ -188,17 +207,8 @@ function DrawingArea() {
     }
 
 
-    // function updateElement(index,x1,y1,x,y,options,points){
-    //   const ele = createElement(index,currentTool, x1,y1,x,y,options,points)
-
-    //   const tempEle = [...elements]
-    //   tempEle[index] = ele
-    //   setElements(tempEle)
-
-    // }
-
     useEffect(()=>{
-
+      
       const canvas = canvasRef.current
       const ctx = canvas.getContext('2d')
             
@@ -221,6 +231,7 @@ function DrawingArea() {
         })
       }
       ctx.restore()
+
       const onMouseDown = (e) =>{
 
         // calculating the coordinates with reference to canvas
@@ -240,8 +251,8 @@ function DrawingArea() {
                 const {pointsArr} = currElement
                 setPoints(pointsArr)
                 
-                let offsetX = x 
-                let offsetY = y  
+                let offsetX = pointsArr.map(point => x - point[0]) 
+                let offsetY = pointsArr.map(point => y - point[1])  
             
                 setMovingElement([currElement,offsetX,offsetY])
               }
@@ -316,25 +327,16 @@ function DrawingArea() {
               if(currentTool === 'eraser'){
                 options = {stroke: "white",strokeWidth: strokeWidth, roughness: 0}
               }
-  
-              //updating element according to the movement of mouse
-              const element = createElement(index+1,currentTool, x1,y1,x,y,options,points)
-              const tempElements = [...elements]
-              tempElements[index] = element
-              setElements(tempElements)
+              
+              updateElement(index,currentTool, x1,y1,x,y,options, points)
               
             }
             
             // for line and rectangle
             else{
-    
-              //updating element according to the movement of mouse
+              
               const options = {stroke:stroke, strokeWidth, roughness:roughness}
-              const element = createElement(index+1,currentTool, x1,y1,x,y, options)
-    
-              const tempElements = [...elements]
-              tempElements[index] = element
-              setElements(tempElements)
+              updateElement(index, currentTool, x1,y1,x,y,options)
             }
           }
 
@@ -345,55 +347,23 @@ function DrawingArea() {
             const {options} = movingElement[0].element // getting options of the element
             
             if(type === 'pen'){
-              
-              let pointsArr = [...points]
-              
-              const newX = (x-pointsArr[0][0])
-              const newY = (y-pointsArr[0][1])
-              let offsetX = (x-pointsArr[0][0])
-              let offsetY = (y-pointsArr[0][1])
-              let currDist = cartesianDistance(x,y, pointsArr[0][0], pointsArr[0][1])
-
-              for(let i =0; i<pointsArr.length; i++){
-                  
-                const currX = pointsArr[i][0]
-                const currY = pointsArr[i][1]
-      
-                const tempDist = cartesianDistance(x,y,currX,currY)
-                
-                if(tempDist < currDist){
-                  currDist = tempDist
-                  offsetX = x-currX
-                  offsetY = y-currY
-
-                }
-              }
-
-              // console.log(movingElement[1],movingElement[2])
-              // const offsetAr = []
-
-              // for(let i =0; i <pointsArr.length; i++){
-              
-              // }
-
-
-              // console.log([x,y], [pointsArr[0][0], pointsArr[0][1]])
 
               const element = movingElement[0]
               
               let {id} = element
-              
-              for(let i =0; i<pointsArr.length; i++){
-                pointsArr[i][0] = pointsArr[i][0] + offsetX
-                pointsArr[i][1] = pointsArr[i][1] + offsetY
-              }
-              // setPoints(pointsArr)
-              const updatedElement = createElement(id,type,pointsArr[0][0],pointsArr[0][1],pointsArr[1][0], pointsArr[1][1], options,pointsArr)
-                
-                const tempElements = [...elements]
-                tempElements[id-1] = updatedElement
-                setElements(tempElements)
 
+              let pointsArr = [...points]
+              let offsetX = movingElement[1]
+              let offsetY = movingElement[2]
+
+              for(let  i=0; i < pointsArr.length; i++){
+                pointsArr[i][0] = x-offsetX[i]
+                pointsArr[i][1] = y-offsetY[i]
+              }
+
+              // setPoints(pointsArr)
+              updateElement(id-1,type,pointsArr[0][0],pointsArr[0][1],pointsArr[1][0], pointsArr[1][1], options,pointsArr)
+              
             }
             else if(type && type != 'pen'){
               const newX = (x-movingElement[1])
@@ -402,11 +372,7 @@ function DrawingArea() {
                 const {id,type, x1,y1,x2,y2} = movingElement[0]
                 
                 //updating the element on mouse move
-                const updatedElement = createElement(id,type,newX,newY,newX+x2-x1, newY+y2-y1, options)
-                
-                const tempElements = [...elements]
-                tempElements[id-1] = updatedElement
-                setElements(tempElements)
+                updateElement(id-1,type,newX,newY,newX+x2-x1, newY+y2-y1, options)
                 
               }
 
@@ -464,7 +430,7 @@ function DrawingArea() {
   return (
     <div className='flex justify-center '>
     <canvas ref = {canvasRef} height={window.innerHeight} width={window.innerWidth} 
-    className={` border-2 border-[#F2F2F2] m-0 ${currentTool === 'eraser' ? "cursor-cell" : "cursor-crosshair"}`} id='canvas'></canvas>
+    className={` border-2 border-[#F2F2F2] m-0 ${currentTool === 'eraser' ? "cursor-cell" : currentTool === 'pan' ? 'cursor-grab' : "cursor-crosshair"}`} id='canvas'></canvas>
     </div>
   )
 }
