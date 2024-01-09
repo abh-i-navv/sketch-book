@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState,useEffect } from 'react'
 import DrawingArea from './components/DrawingArea'
 import ToolBar from './components/ToolBar';
 import { DrawProvider } from './context/useDraw';
@@ -15,20 +15,21 @@ function App() {
   const [isMoving, setMoving] = useState([])
   const [scale, setScale] = useState(1)
 
-  return (
-    <DrawProvider value={{elements,setElements, currentTool, setCurrentTool, setStroke, stroke,
-     setStrokeWidth, strokeWidth, roughness, setRoughness, elementHistory, setElementHistory, isMoving, setMoving,scale, setScale}}>
-      <>
-        <div className='overflow-auto no-scrollbar'>
-        <div className='flex flex-col justify-center items-center '>
-    
-        <ToolBar />
 
-          <DrawingArea currentTool={currentTool}/>
-        </div>
-        </div>
-      </>
-    </DrawProvider>
+  return (
+      <DrawProvider value={{elements,setElements, currentTool, setCurrentTool, setStroke, stroke,
+      setStrokeWidth, strokeWidth, roughness, setRoughness, elementHistory, setElementHistory, isMoving, setMoving,scale, setScale}}>
+        <>
+          <div className='overflow-auto no-scrollbar'>
+          <div className='flex flex-col justify-center items-center '>
+      
+          <ToolBar />
+
+            <DrawingArea currentTool={currentTool}/>
+          </div>
+          </div>
+        </>
+      </DrawProvider>
   )
 }
 

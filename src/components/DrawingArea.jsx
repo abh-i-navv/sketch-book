@@ -136,7 +136,6 @@ function DrawingArea() {
           if((x <= maxX+10 && x >= minX-10 && y<= maxY+10 && y>=minY-10) &&
             ((Math.abs(x-minX) < 10 && y<=maxY && y>=minY) || (Math.abs(x-maxX) < 10 && y<=maxY && y>=minY) || 
             (Math.abs(y-minY) < 10 && x<=maxX && x>=minX) || (Math.abs(y-maxY) < 10 && x<=maxX && x>=minX))){
-            console.log(element)
             return element
           }
         }
@@ -232,7 +231,6 @@ function DrawingArea() {
       const scaleOffsetY = (scaleHeight - canvas.height)/2
       setScaleOffset({x:scaleOffsetX, y:scaleOffsetY})
 
-      console.log(scale)
 
       ctx.save()
       ctx.translate(panOffset.x*scale - scaleOffsetX, panOffset.y*scale -scaleOffsetY)
@@ -255,7 +253,7 @@ function DrawingArea() {
       const onMouseDown = (e) =>{
 
         // calculating the coordinates with reference to canvas
-        const x = (e.clientX - panOffset.x*scale + scaleOffsetX)/scale
+        const x = (e.clientX - panOffset.x*scale + scaleOffsetX)/scale + 7
         const y = (e.clientY - panOffset.y*scale + scaleOffsetY)/scale
 
         // if selection tool is selected
@@ -264,9 +262,9 @@ function DrawingArea() {
           if(elements){
     
             //getting the element at the point x,y
-            const currElement = findElement(x,y, elements)        
-
+            const currElement = findElement(x,y, elements)  
             if(currElement){
+              setStrokeWidth(currElement.element.options.strokeWidth)     
               if(currElement.type ==='pen'){
                 const {pointsArr} = currElement
                 setPoints(pointsArr)
@@ -297,9 +295,10 @@ function DrawingArea() {
             
             // clearing array of points
             setPoints([])
-            let options = {stroke:stroke, strokeWidth:strokeWidth, roughness:roughness}
+            setRoughness(0.5)
+            let options = {stroke:stroke, strokeWidth:strokeWidth, roughness:roughness, curveFitting: 1}
             if(currentTool === 'eraser'){
-              options = {stroke: "white",strokeWidth: strokeWidth, roughness: 0}
+              options = {stroke: "white",strokeWidth: strokeWidth, roughness: roughness}
               
             }
             
@@ -324,7 +323,7 @@ function DrawingArea() {
       }
 
       const onMouseMove = (e) => {
-        const x = (e.clientX - panOffset.x*scale + scaleOffsetX)/scale
+        const x = (e.clientX - panOffset.x*scale + scaleOffsetX)/scale + 7
         const y = (e.clientY - panOffset.y*scale + scaleOffsetY)/scale
           
           if(currentTool === 'pan' && action === 'panning'){
@@ -368,7 +367,6 @@ function DrawingArea() {
             if(type === 'pen'){
 
               const element = movingElement[0]
-              
               let {id} = element
 
               let pointsArr = [...points]
