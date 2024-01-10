@@ -253,7 +253,7 @@ function DrawingArea() {
       const onMouseDown = (e) =>{
 
         // calculating the coordinates with reference to canvas
-        const x = (e.clientX - panOffset.x*scale + scaleOffsetX)/scale + 7
+        const x = (e.clientX - panOffset.x*scale + scaleOffsetX)/scale 
         const y = (e.clientY - panOffset.y*scale + scaleOffsetY)/scale
 
         // if selection tool is selected
@@ -323,7 +323,7 @@ function DrawingArea() {
       }
 
       const onMouseMove = (e) => {
-        const x = (e.clientX - panOffset.x*scale + scaleOffsetX)/scale + 7
+        const x = (e.clientX - panOffset.x*scale + scaleOffsetX)/scale 
         const y = (e.clientY - panOffset.y*scale + scaleOffsetY)/scale
           
           if(currentTool === 'pan' && action === 'panning'){

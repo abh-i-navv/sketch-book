@@ -20,7 +20,7 @@ function App() {
       <DrawProvider value={{elements,setElements, currentTool, setCurrentTool, setStroke, stroke,
       setStrokeWidth, strokeWidth, roughness, setRoughness, elementHistory, setElementHistory, isMoving, setMoving,scale, setScale}}>
         <>
-          <div className='overflow-auto no-scrollbar'>
+          <div className='overflow-y-scroll no-scrollbar overflow-hidden'>
           <div className='flex flex-col justify-center items-center '>
       
           <ToolBar />
