@@ -424,9 +424,9 @@ function DrawingArea() {
       document.addEventListener("wheel", onWheelEvent);
 
 
-      // canvas.addEventListener('touchmove', onMouseMove)
-      // document.addEventListener('touchend', onMouseUp)
-      // canvas.addEventListener('touchstart', onMouseDown)
+      canvas.addEventListener('touchmove', onMouseMove)
+      document.addEventListener('touchend', onMouseUp)
+      canvas.addEventListener('touchstart', onMouseDown)
 
       return() => {
         // clearing event listeners
@@ -435,9 +435,9 @@ function DrawingArea() {
         document.removeEventListener('mouseup', onMouseUp)
         document.removeEventListener("wheel", onWheelEvent);
 
-        // canvas.removeEventListener('touchstart', onMouseDown)
-        // canvas.removeEventListener('touchmove', onMouseMove)
-        // document.removeEventListener('touchend', onMouseUp)
+        canvas.removeEventListener('touchstart', onMouseDown)
+        canvas.removeEventListener('touchmove', onMouseMove)
+        document.removeEventListener('touchend', onMouseUp)
         
       }
 
