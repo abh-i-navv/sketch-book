@@ -251,10 +251,11 @@ function DrawingArea() {
       ctx.restore()
 
       const onMouseDown = (e) =>{
-
+        
         // calculating the coordinates with reference to canvas
         const x = (e.clientX - panOffset.x*scale + scaleOffsetX)/scale 
         const y = (e.clientY - panOffset.y*scale + scaleOffsetY)/scale
+        
 
         // if selection tool is selected
         if(currentTool === 'moving'){
@@ -323,8 +324,18 @@ function DrawingArea() {
       }
 
       const onMouseMove = (e) => {
-        const x = (e.clientX - panOffset.x*scale + scaleOffsetX)/scale 
-        const y = (e.clientY - panOffset.y*scale + scaleOffsetY)/scale
+        // console.log(e.touches[0].clientX, e.touches[0].clientY);
+
+        // console.log(e.type === 'touchmove');
+
+        
+        let x = (e.clientX - panOffset.x*scale + scaleOffsetX)/scale 
+        let y = (e.clientY - panOffset.y*scale + scaleOffsetY)/scale
+        
+        if(e.type === 'touchmove'){
+          x = (e.touches[0].clientX - panOffset.x*scale + scaleOffsetX)/scale 
+          y = (e.touches[0].clientY - panOffset.y*scale + scaleOffsetY)/scale
+        }
           
           if(currentTool === 'pan' && action === 'panning'){
             setPanOffset(prev => ({x:prev.x+(x-initialPoints.x), y:prev.y + (y-initialPoints.y)}))
@@ -415,6 +426,10 @@ function DrawingArea() {
         const {deltaX, deltaY} = e
         setPanOffset(prev => ({x:prev.x - deltaX, y:prev.y - deltaY}))
 
+      }
+
+      const onTouchMove = (e) => {
+        console.log(e.touches[0].clientX, e.touches[0].clientY);
       }
 
       //adding event listeners for mouse actions
