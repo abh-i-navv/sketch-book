@@ -16,7 +16,9 @@ export const DrawContext = createContext({
     isMoving: [],
     setMoving: () => {},
     scale: 1,
-    setScale: () => {}
+    setScale: () => {},
+    canvasRef: null,
+
 
 })
 

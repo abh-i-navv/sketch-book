@@ -18,7 +18,7 @@ function App() {
 
   return (
       <DrawProvider value={{elements,setElements, currentTool, setCurrentTool, setStroke, stroke,
-      setStrokeWidth, strokeWidth, roughness, setRoughness, elementHistory, setElementHistory, isMoving, setMoving,scale, setScale}}>
+      setStrokeWidth, strokeWidth, roughness, setRoughness, elementHistory, setElementHistory, isMoving, setMoving,scale, setScale,canvasRef}}>
         <>
           <div className='overflow-y-scroll no-scrollbar overflow-hidden'>
           <div className='flex flex-col justify-center items-center '>

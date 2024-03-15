@@ -10,17 +10,16 @@ const gen = rough.generator()
 
 function DrawingArea() {
 
-    const canvasRef = useRef(null)
-    const [action, setAction] = useState('none')
-    const [movingElement, setMovingElement] = useState(null) // for keeping track of the selected element using selection tool
-    const [panOffset, setPanOffset] = useState({x:0, y:0})
-    const [initialPoints, setInitialPoints] = useState({x:0, y:0})
-    const [scaleOffset,setScaleOffset] = useState({x:0, y:0})
-    const [points,setPoints] = useState([])
-
-    const {elements, setElements,strokeWidth,setStrokeWidth,stroke,setStroke, setRoughness,
-      roughness, currentTool,setCurrentTool,elemenHistory, setElementHistory, isMoving, setMoving,scale, setScale} = useDraw()
-
+  const [action, setAction] = useState('none')
+  const [movingElement, setMovingElement] = useState(null) // for keeping track of the selected element using selection tool
+  const [panOffset, setPanOffset] = useState({x:0, y:0})
+  const [initialPoints, setInitialPoints] = useState({x:0, y:0})
+  const [scaleOffset,setScaleOffset] = useState({x:0, y:0})
+  const [points,setPoints] = useState([])
+  
+  const {elements, setElements,strokeWidth,setStrokeWidth,stroke,setStroke, setRoughness,
+    roughness, currentTool,setCurrentTool,elemenHistory, setElementHistory, isMoving, setMoving,scale, setScale,canvasRef} = useDraw()
+    
 
     const createElement = (id, type,x1,y1,x2,y2,options,pointsArr ) => {
 
@@ -216,7 +215,6 @@ function DrawingArea() {
     const findElement = (x,y,elements) => {
       return (elements.find(element => elementFinder(x,y,element)))
     }
-
 
     useEffect(()=>{
       
@@ -461,12 +459,12 @@ function DrawingArea() {
         
       }
 
-    },[panOffset,elements,currentTool,action,scale])
+    },[panOffset,elements,currentTool,action,scale,canvasRef.current])
 
   return (
     <div className='flex justify-center '>
-    <canvas ref = {canvasRef} height={window.innerHeight} width={window.innerWidth} 
-    className={` border-2 border-[#F2F2F2] m-0 ${currentTool === 'eraser' ? "cursor-cell" : currentTool === 'pan' ? 'cursor-grab' : "cursor-crosshair"}`} id='canvas'></canvas>
+    <canvas ref = {canvasRef} height={window.innerHeight} width={window.innerWidth}
+    className={`border-2 border-[#F2F2F2] m-0 ${currentTool === 'eraser' ? "cursor-cell" : currentTool === 'pan' ? 'cursor-grab' : "cursor-crosshair"}`} id='canvas'></canvas>
     </div>
   )
 }

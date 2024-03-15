@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import useDraw from '../context/useDraw';
 import { FaPen } from "react-icons/fa";
 import { MdOutlineRectangle } from "react-icons/md";
 import { MdOutlineClear } from "react-icons/md";
-import { IoRemoveOutline } from "react-icons/io5";
 import { IoEllipseOutline } from "react-icons/io5";
 import { GoDiamond } from "react-icons/go";
 import { IoTriangleOutline } from "react-icons/io5";
 import { LuEraser } from "react-icons/lu";
-import useDraw from '../context/useDraw';
 import { LuUndo2 } from "react-icons/lu";
 import { LuRedo2 } from "react-icons/lu";
 import { RiDragMove2Fill } from "react-icons/ri";
@@ -16,20 +15,19 @@ import { FaPlus } from "react-icons/fa6";
 import { FaMinus } from "react-icons/fa6";
 import { IconContext } from 'react-icons';
 import { MdOutlineHorizontalRule } from "react-icons/md";
+import SideBar from './SideBar';
 
 
 function ToolBar() {
   const {currentTool,setCurrentTool,strokeWidth,setStrokeWidth,stroke,setStroke, setRoughness,
-    roughness,setElements,elements,elementHistory, setElementHistory,scale, setScale} = useDraw()
-
-  
+    roughness,setElements,elements,elementHistory, setElementHistory,scale, setScale,canvasRef} = useDraw()
+ 
   function Undo(){
     if(elements.length != 0){
 
       let elementCopy = elements
       const lastElement = elementCopy.pop()
       
-      console.log(elements)
       setElementHistory(prev => [...prev, lastElement])
       setElements((elements) => [...elements])
     }
@@ -39,7 +37,6 @@ function ToolBar() {
       if(elementHistory.length != 0){
         
           let redoElement = elementHistory.pop()
-          console.log(elementHistory)
           
           setElements((prev) => [...prev,redoElement])
           setElementHistory((prev) => [...prev])
@@ -50,10 +47,12 @@ function ToolBar() {
 
   }
 
-
   return (
     <>
-    <div className='flex absolute top-0 border-2 border-[#322560] z-10 bg-[#fafafa] rounded-xl mt-2 shadow-md'>
+      <SideBar></SideBar>
+    
+
+    <div className='hidden lg:flex absolute top-0 border-2 border-[#322560] z-10 bg-[#fafafa] rounded-xl mt-2 shadow-md'>
         <div className={`cursor-pointer m-2 p-2 flex items-center justify-center hover:bg-[#b3aad5] ${currentTool === 'moving' ? 'bg-[#b3aad5]' : ''} `} onClick={() => {setCurrentTool('moving')}}>
           <RiDragMove2Fill />
         </div>
