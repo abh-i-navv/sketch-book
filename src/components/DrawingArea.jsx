@@ -250,11 +250,16 @@ function DrawingArea() {
 
       const onMouseDown = (e) =>{
         
+        e.preventDefault();
         // calculating the coordinates with reference to canvas
-        const x = (e.clientX - panOffset.x*scale + scaleOffsetX)/scale 
-        const y = (e.clientY - panOffset.y*scale + scaleOffsetY)/scale
+        let x = (e.clientX - panOffset.x*scale + scaleOffsetX)/scale 
+        let y = (e.clientY - panOffset.y*scale + scaleOffsetY)/scale
         
-
+        if(e.type === 'touchstart'){
+          x = (e.touches[0].clientX - panOffset.x*scale + scaleOffsetX)/scale 
+          y = (e.touches[0].clientY - panOffset.y*scale + scaleOffsetY)/scale
+        }
+        
         // if selection tool is selected
         if(currentTool === 'moving'){
           setAction('moving')
@@ -325,8 +330,7 @@ function DrawingArea() {
         // console.log(e.touches[0].clientX, e.touches[0].clientY);
 
         // console.log(e.type === 'touchmove');
-
-        
+        if(currentTool === 'none')  return
         let x = (e.clientX - panOffset.x*scale + scaleOffsetX)/scale 
         let y = (e.clientY - panOffset.y*scale + scaleOffsetY)/scale
         
@@ -412,7 +416,6 @@ function DrawingArea() {
       }
 
       const onMouseUp = () => {
-        
         setAction('none')
         setPoints([])
         setMovingElement(null)
@@ -436,9 +439,7 @@ function DrawingArea() {
       canvas.addEventListener('mousedown', onMouseDown)
       document.addEventListener("wheel", onWheelEvent);
 
-      document.addEventListener("touchstart",(e) => {
-        e.preventDefault();
-      },false)
+      
       canvas.addEventListener('touchmove', onMouseMove)
       document.addEventListener('touchend', onMouseUp)
       canvas.addEventListener('touchstart', onMouseDown)

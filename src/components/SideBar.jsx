@@ -12,10 +12,13 @@ import { IconContext } from 'react-icons';
 import { MdOutlineHorizontalRule } from "react-icons/md";
 import useDraw from '../context/useDraw';
 
+
+
+
+
 export default function () {
     const {currentTool,setCurrentTool,strokeWidth,setStrokeWidth,stroke,setStroke, setRoughness,
         roughness,setElements,elements,elementHistory, setElementHistory,scale, setScale} = useDraw()
-    
 
   return (
     <>
@@ -54,7 +57,10 @@ export default function () {
             <div className={`cursor-pointer m-2 p-2 flex items-center justify-center hover:bg-[#b3aad5] ${currentTool === 'eraser' ? 'bg-[#b3aad5]' : ''}`} onClick={()=>{setCurrentTool('eraser')}}>
                 <LuEraser  />
             </div>        
-            <div className={`cursor-pointer m-2 p-2 flex items-center justify-center hover:bg-[#c49898]`} onClick={() => {setElements([])}}>
+            <div className='flex justify-center items-center m-2'>
+                <input type='color' value={stroke} onChange={(e) => {setStroke(e.target.value)}}></input>
+            </div>
+            <div className={`cursor-pointer m-2 p-2 flex items-center justify-center`} id='clear' onClick={() => {setElements([])}}>
                 <MdOutlineClear />
             </div>
             </IconContext.Provider>
