@@ -22,6 +22,16 @@ function ToolBar() {
   const {currentTool,setCurrentTool,strokeWidth,setStrokeWidth,stroke,setStroke, setRoughness,
     roughness,setElements,elements,elementHistory, setElementHistory,scale, setScale,canvasRef} = useDraw()
  
+
+  function Clear(e){
+    setElementHistory([])
+    const ele = elements
+    
+    setElementHistory(ele)
+    setElements([])
+    
+  }
+
   function Undo(){
     if(elements.length != 0){
 
@@ -46,6 +56,23 @@ function ToolBar() {
       }
 
   }
+
+  // const handleResize = (e) => {
+  //   const ctx = canvasRef.current.getContext('2d')
+  //   ctx.height = window.innerHeight
+  //   ctx.width = window.innerWidth
+  //   console.log(ctx)
+    
+  // }
+ 
+  // useEffect(() => {
+  //   document.addEventListener("resize",handleResize)
+    
+  //   return(
+  //     document.removeEventListener("resize", handleResize)
+  //   )
+  // },[addEventListener("resize",handleResize)])
+
 
   return (
     <>
@@ -83,7 +110,8 @@ function ToolBar() {
           <div className={`cursor-pointer m-2 p-2 flex items-center justify-center hover:bg-[#b3aad5] ${currentTool === 'eraser' ? 'bg-[#b3aad5]' : ''}`} onClick={()=>{setCurrentTool('eraser')}}>
             <LuEraser  />
           </div>        
-          <div className={`cursor-pointer m-2 p-2 flex items-center justify-center hover:bg-[#c49898]`} onClick={() => {setElements([])}}>
+          <div className={`cursor-pointer m-2 p-2 flex items-center justify-center hover:bg-[#c49898]`} 
+          onClick={Clear}>
             <MdOutlineClear />
           </div>
         </IconContext.Provider>
