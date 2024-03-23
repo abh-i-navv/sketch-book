@@ -20,6 +20,15 @@ export default function () {
     const {currentTool,setCurrentTool,strokeWidth,setStrokeWidth,stroke,setStroke, setRoughness,
         roughness,setElements,elements,elementHistory, setElementHistory,scale, setScale} = useDraw()
 
+    function Clear(e){
+        setElementHistory([])
+        const ele = elements
+        
+        setElementHistory(ele)
+        setElements([])
+        
+    }
+
   return (
     <>
 
@@ -60,7 +69,7 @@ export default function () {
             <div className='flex justify-center items-center m-2'>
                 <input type='color' value={stroke} onChange={(e) => {setStroke(e.target.value)}}></input>
             </div>
-            <div className={`cursor-pointer m-2 p-2 flex items-center justify-center`} id='clear' onClick={() => {setElements([])}}>
+            <div className={`cursor-pointer m-2 p-2 flex items-center justify-center`} id='clear' onClick={Clear}>
                 <MdOutlineClear />
             </div>
             </IconContext.Provider>

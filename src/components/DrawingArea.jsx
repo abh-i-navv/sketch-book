@@ -19,7 +19,6 @@ function DrawingArea() {
   
   const {elements, setElements,strokeWidth,setStrokeWidth,stroke,setStroke, setRoughness,
     roughness, currentTool,setCurrentTool,elemenHistory, setElementHistory, isMoving, setMoving,scale, setScale,canvasRef} = useDraw()
-    
 
     const createElement = (id, type,x1,y1,x2,y2,options,pointsArr ) => {
 
@@ -216,10 +215,20 @@ function DrawingArea() {
       return (elements.find(element => elementFinder(x,y,element)))
     }
 
-    useEffect(()=>{
+    
+    useEffect(()=>{    
+
+      // const storageEle = JSON.parse(localStorage.getItem('elements'))
+
+      // if(storageEle){
+      //   setElements(storageEle)
+      //   localStorage.clear()
+      // }
       
-      const canvas = canvasRef.current
-      const ctx = canvas.getContext('2d')
+      let canvas = canvasRef.current
+      let ctx = canvas.getContext('2d')
+      ctx.height = window.innerHeight
+      ctx.width = window.innerWidth
       const roughCanvas =  rough.canvas(canvas)
       ctx.clearRect(0,0,canvas.width,canvas.height)    
             
@@ -228,7 +237,6 @@ function DrawingArea() {
       const scaleOffsetX = (scaleWidth - canvas.width)/2
       const scaleOffsetY = (scaleHeight - canvas.height)/2
       setScaleOffset({x:scaleOffsetX, y:scaleOffsetY})
-
 
       ctx.save()
       ctx.translate(panOffset.x*scale - scaleOffsetX, panOffset.y*scale -scaleOffsetY)
@@ -420,6 +428,8 @@ function DrawingArea() {
         setPoints([])
         setMovingElement(null)
         ctx.closePath()
+        ctx.height = window.innerHeight
+        ctx.width = window.innerWidth
         
       }
 
@@ -429,8 +439,10 @@ function DrawingArea() {
 
       }
 
-      const onTouchMove = (e) => {
-        console.log(e.touches[0].clientX, e.touches[0].clientY);
+      const handleResize = (e) => {
+        const storageEle = JSON.parse(localStorage.getItem('elements'))
+        setElements(storageEle)
+        localStorage.clear()
       }
 
       //adding event listeners for mouse actions
@@ -443,6 +455,7 @@ function DrawingArea() {
       canvas.addEventListener('touchmove', onMouseMove)
       document.addEventListener('touchend', onMouseUp)
       canvas.addEventListener('touchstart', onMouseDown)
+      window.addEventListener("resize", handleResize)
 
       return() => {
         // clearing event listeners
@@ -457,15 +470,22 @@ function DrawingArea() {
         document.removeEventListener("touchstart",(e) => {
           e.preventDefault();
         },false)
+        window.removeEventListener("resize", handleResize)
         
       }
 
-    },[panOffset,elements,currentTool,action,scale,canvasRef.current])
+    },[panOffset,elements,currentTool,action,scale,])
 
+    useEffect(() => {
+      localStorage.setItem('elements', JSON.stringify(elements))
+      
+    },[elements])
+ 
+    
   return (
-    <div className='flex justify-center '>
+    <div className='flex justify-center'>
     <canvas ref = {canvasRef} height={window.innerHeight} width={window.innerWidth}
-    className={`border-2 border-[#F2F2F2] m-0 ${currentTool === 'eraser' ? "cursor-cell" : currentTool === 'pan' ? 'cursor-grab' : "cursor-crosshair"}`} id='canvas'></canvas>
+    className={`border-2 border-yellow-50 m-0 ${currentTool === 'eraser' ? "cursor-cell" : currentTool === 'pan' ? 'cursor-grab' : "cursor-crosshair"}`} id='canvas'></canvas>
     </div>
   )
 }

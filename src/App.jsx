@@ -14,8 +14,7 @@ function App() {
   const [ elementHistory, setElementHistory] = useState([])
   const [isMoving, setMoving] = useState([])
   const [scale, setScale] = useState(1)
-
-
+  
   return (
       <DrawProvider value={{elements,setElements, currentTool, setCurrentTool, setStroke, stroke,
       setStrokeWidth, strokeWidth, roughness, setRoughness, elementHistory, setElementHistory, isMoving, setMoving,scale, setScale,canvasRef}}>
